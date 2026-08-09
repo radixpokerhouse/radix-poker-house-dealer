@@ -4,7 +4,7 @@ const { GatewayApiClient, RadixNetwork } = require('@radixdlt/babylon-gateway-ap
 const crypto = require('crypto');
 
 const DAPP_DEFINITION_ADDRESS = 'account_tdx_2_12ynl5t4pp7263sz5ynukgex92zk44092gq0d6423wyml8vv3cqtvh9';
-const EXPECTED_ORIGIN = 'http://localhost:3000';
+const EXPECTED_ORIGIN = 'https://radix-poker-house-web.radixpokerhouse.workers.dev';
 
 const { verifySignedChallenge } = Rola({
   networkId: RadixNetwork.Stokenet,
