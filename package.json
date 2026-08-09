@@ -15,6 +15,7 @@
     "@radixdlt/babylon-gateway-api-sdk": "^1.10.1",
     "@radixdlt/rola": "^2.1.0",
     "blakejs": "^1.2.1",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "isomorphic-fetch": "^3.0.0",
     "ws": "^8.21.1"

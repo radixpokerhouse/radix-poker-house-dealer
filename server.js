@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const { WebSocketServer } = require('ws');
 const crypto = require('crypto');
 const { generateShuffledDeck, dealHoleCards } = require('./deck');
 const { generateChallenge, verifyPlayerOwnsSeat } = require('./auth');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
