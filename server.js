@@ -25,10 +25,10 @@ app.get('/auth/challenge', (req, res) => {
 });
 
 app.post('/auth/verify', async (req, res) => {
-  const { signedChallenge, tableBadgeResource, claimedSeat } = req.body;
+  const { signedChallenge, tableBadgeResource } = req.body;
   try {
     const { accountAddress, seat } = await verifyPlayerOwnsSeat({
-      signedChallenge, tableBadgeResource, claimedSeat,
+      signedChallenge, tableBadgeResource,
     });
     const sessionToken = crypto.randomBytes(24).toString('hex');
     sessions.set(sessionToken, { seat, accountAddress, expiresAt: Date.now() + SESSION_TTL_MS });

@@ -34,7 +34,7 @@ function consumeChallenge(challenge) {
   return (Date.now() - entry.createdAt) < CHALLENGE_TTL_MS;
 }
 
-async function verifyPlayerOwnsSeat({ signedChallenge, tableBadgeResource, claimedSeat }) {
+async function verifyPlayerOwnsSeat({ signedChallenge, tableBadgeResource }) {
   const challengeValid = consumeChallenge(signedChallenge.challenge);
   if (!challengeValid) {
     throw new Error('Challenge invalid or expired');
@@ -81,22 +81,22 @@ async function verifyPlayerOwnsSeat({ signedChallenge, tableBadgeResource, claim
     },
   });
 
-  let matchedSeat = false;
+  let ownedSeat = null;
   for (const item of dataResponse.non_fungible_ids || []) {
     const seatField = item.data?.programmatic_json?.fields?.find(
       (f) => f.field_name === 'seat_number'
     );
-    if (seatField && Number(seatField.value) === Number(claimedSeat)) {
-      matchedSeat = true;
+    if (seatField) {
+      ownedSeat = Number(seatField.value);
       break;
     }
   }
 
-  if (!matchedSeat) {
-    throw new Error('Account does not own the badge for the claimed seat');
+  if (ownedSeat === null) {
+    throw new Error('Could not read seat number from owned badge');
   }
 
-  return { accountAddress, seat: claimedSeat };
+  return { accountAddress, seat: ownedSeat };
 }
 
 module.exports = { generateChallenge, verifyPlayerOwnsSeat };
