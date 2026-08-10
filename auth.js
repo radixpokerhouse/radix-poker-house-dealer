@@ -41,8 +41,8 @@ async function verifyPlayerOwnsSeat({ signedChallenge, tableBadgeResource }) {
   }
 
   const result = await verifySignedChallenge(signedChallenge);
-  if (!result.isValid) {
-    throw new Error('Signature verification failed');
+  if (result.isErr()) {
+    throw new Error('Signature verification failed: ' + JSON.stringify(result.error));
   }
 
   const accountAddress = signedChallenge.address;
