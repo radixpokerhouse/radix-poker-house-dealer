@@ -4,6 +4,7 @@ const { WebSocketServer } = require('ws');
 const crypto = require('crypto');
 const { generateShuffledDeck, dealHoleCards } = require('./deck');
 const { generateChallenge, verifyPlayerOwnsSeat } = require('./auth');
+const { startAutoDeal } = require('./autodeal');
 
 const app = express();
 app.use(cors());
@@ -13,6 +14,9 @@ const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
   console.log(`Radix Poker House dealer listening on :${PORT}`);
 });
+
+const GENESIS_TABLE_COMPONENT = 'component_tdx_2_1cpyxfnctg2yf98sk4vm5za0yg8alrr43caeamcqp0urgeju63647qv';
+startAutoDeal(GENESIS_TABLE_COMPONENT, seatSockets);
 
 const wss = new WebSocketServer({ server });
 
