@@ -15,9 +15,6 @@ const server = app.listen(PORT, () => {
   console.log(`Radix Poker House dealer listening on :${PORT}`);
 });
 
-const GENESIS_TABLE_COMPONENT = 'component_tdx_2_1cpyxfnctg2yf98sk4vm5za0yg8alrr43caeamcqp0urgeju63647qv';
-startAutoDeal(GENESIS_TABLE_COMPONENT, seatSockets);
-
 const wss = new WebSocketServer({ server });
 
 // seat_number -> websocket connection
@@ -89,3 +86,6 @@ app.post('/deal', (req, res) => {
 });
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+const GENESIS_TABLE_COMPONENT = 'component_tdx_2_1cpyxfnctg2yf98sk4vm5za0yg8alrr43caeamcqp0urgeju63647qv';
+startAutoDeal(GENESIS_TABLE_COMPONENT, seatSockets);
