@@ -39,9 +39,7 @@ async function pollTable(componentAddress, seatSockets) {
     // Compute combined_seed the same way the contract does: concatenate
     // revealed secrets in the order they were revealed (map insertion order).
     const revealEntries = getField('seed_reveals').entries;
-    const buffers = revealEntries.map((e) =>
-      Buffer.from(e.value.elements.map((x) => Number(x.value)))
-    );
+    const buffers = revealEntries.map((e) => Buffer.from(e.value.hex, 'hex'));
 
     // Fingerprint on the actual revealed secret bytes (unique per hand,
     // since a fresh random secret is generated every commit+reveal) --
