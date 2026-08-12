@@ -4,7 +4,7 @@ const { WebSocketServer } = require('ws');
 const crypto = require('crypto');
 const { generateShuffledDeck, dealHoleCards } = require('./deck');
 const { generateChallenge, verifyPlayerOwnsSeat } = require('./auth');
-const { startAutoDeal } = require('./autodeal');
+const { startAutoDeal, getLastDeal } = require('./autodeal');
 
 const app = express();
 app.use(cors());
@@ -55,6 +55,12 @@ wss.on('connection', (ws) => {
         seatSockets.set(session.seat, ws);
         ws.seat = session.seat;
         console.log(`Seat ${session.seat} authenticated and connected`);
+
+        const cached = getLastDeal(session.seat);
+        if (cached) {
+          ws.send(JSON.stringify({ type: 'hole_cards', cards: cached.cards, community: cached.community }));
+          console.log(`Resent cached deal to seat ${session.seat}`);
+        }
       }
     } catch (e) {
       console.error('Bad message:', e.message);

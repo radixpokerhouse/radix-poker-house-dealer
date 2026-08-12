@@ -10,6 +10,13 @@ const gatewayApi = GatewayApiClient.initialize({
 // every poll (keyed by a fingerprint of the current commit round).
 const dealtHands = new Set();
 
+// Cache the most recent deal per seat so a player who (re)connects after
+// the deal already happened still gets their cards immediately.
+const lastDealt = new Map(); // seat -> { cards, community }
+function getLastDeal(seat) {
+  return lastDealt.get(seat);
+}
+
 async function pollTable(componentAddress, seatSockets) {
   try {
     const resp = await gatewayApi.state.innerClient.stateEntityDetails({
@@ -58,6 +65,7 @@ async function pollTable(componentAddress, seatSockets) {
     const { holeCards, community } = dealHoleCards(deck, orderedSeats);
 
     for (const seat of orderedSeats) {
+      lastDealt.set(seat, { cards: holeCards[seat], community });
       const ws = seatSockets.get(seat);
       if (ws && ws.readyState === 1) {
         ws.send(JSON.stringify({ type: 'hole_cards', cards: holeCards[seat], community }));
@@ -74,4 +82,4 @@ function startAutoDeal(componentAddress, seatSockets, intervalMs = 4000) {
   console.log(`Auto-deal polling started for ${componentAddress}`);
 }
 
-module.exports = { startAutoDeal };
+module.exports = { startAutoDeal, getLastDeal };
