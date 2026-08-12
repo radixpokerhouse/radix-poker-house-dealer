@@ -34,10 +34,7 @@ async function pollTable(componentAddress, seatSockets) {
     const allRevealed = seatsNeedingReveal.length > 0 &&
       seatsNeedingReveal.every((s) => revealedSeats.includes(s));
 
-    const fingerprint = `${componentAddress}:${revealedSeats.sort().join(',')}`;
-    if (!allRevealed || dealtHands.has(fingerprint)) return;
-
-    dealtHands.add(fingerprint);
+    if (!allRevealed) return;
 
     // Compute combined_seed the same way the contract does: concatenate
     // revealed secrets in the order they were revealed (map insertion order).
@@ -45,6 +42,14 @@ async function pollTable(componentAddress, seatSockets) {
     const buffers = revealEntries.map((e) =>
       Buffer.from(e.value.elements.map((x) => Number(x.value)))
     );
+
+    // Fingerprint on the actual revealed secret bytes (unique per hand,
+    // since a fresh random secret is generated every commit+reveal) --
+    // NOT on seat numbers alone, which stay the same across hands with
+    // the same players and would falsely mark a new hand as "already dealt".
+    const fingerprint = `${componentAddress}:${Buffer.concat(buffers).toString('hex')}`;
+    if (dealtHands.has(fingerprint)) return;
+    dealtHands.add(fingerprint);
     const combined = Buffer.concat(buffers);
 
     const blake2b = require('blakejs').blake2b;
