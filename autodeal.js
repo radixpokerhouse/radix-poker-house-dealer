@@ -11,10 +11,13 @@ const gatewayApi = GatewayApiClient.initialize({
 const dealtHands = new Set();
 
 // Cache the most recent deal per seat so a player who (re)connects after
-// the deal already happened still gets their cards immediately.
+// the deal already happened still gets their cards immediately -- but
+// only while that hand is still active, so a finished hand's cards
+// don't get resent as if they were still relevant.
 const lastDealt = new Map(); // seat -> { cards, community }
+let handCurrentlyActive = false;
 function getLastDeal(seat) {
-  return lastDealt.get(seat);
+  return handCurrentlyActive ? lastDealt.get(seat) : undefined;
 }
 
 async function pollTable(componentAddress, seatSockets) {
@@ -35,7 +38,11 @@ async function pollTable(componentAddress, seatSockets) {
     );
     const revealedSeats = (getField('seed_reveals')?.entries || []).map((e) => Number(e.key.value));
 
-    if (!handActive) return;
+    handCurrentlyActive = !!handActive;
+    if (!handActive) {
+      lastDealt.clear();
+      return;
+    }
 
     const seatsNeedingReveal = activeSeats.filter((s) => !foldedSeats.has(s));
     const allRevealed = seatsNeedingReveal.length > 0 &&
