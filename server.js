@@ -93,5 +93,5 @@ app.post('/deal', (req, res) => {
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-const GENESIS_TABLE_COMPONENT = 'component_tdx_2_1cz8fw07hh03e8mn9ssu2h0vp9t3hnysjpedfhma2tc3q23a7mfkjql';
+const GENESIS_TABLE_COMPONENT = 'component_tdx_2_1cr4mzwgky0vmftaxas6n200wln694n278gw4xws86cez9tft6nwjtv';
 startAutoDeal(GENESIS_TABLE_COMPONENT, seatSockets);
